@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fbff; /* soft blue background */
+  --foreground: #0f172a; /* slate-900 */
+  --accent: #2563eb;     /* blue-600 */
+  --accent-100: #dbeafe; /* blue-100 */
+  --card-bg: #ffffff;
 }
 
 @theme inline {
@@ -14,8 +17,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b1220;
+    --foreground: #e5e7eb;
+    --card-bg: #0f172a;
   }
 }
 
@@ -23,4 +27,21 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Accent utilities */
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-outline { background: #fff; color: var(--foreground); border: 1px solid var(--accent-100); }
+.btn-outline:hover { background: #f1f5ff; }
+.card { background: var(--card-bg); border: 1px solid var(--accent-100); }
+.heading { color: var(--foreground); }
+
+/* เวลาพิมพ์ให้ซ่อน UI บางส่วน */
+@media print {
+  .print\:hidden { display: none !important; }
+  .print\:shadow-none { box-shadow: none !important; }
+  .print\:p-0 { padding: 0 !important; }
+  /* เมื่อสั่งพิมพ์จากการ์ดเดียว ให้ซ่อนการ์ดอื่นทั้งหมด */
+  .printing-single .print-section:not(.is-printing) { display: none !important; }
 }
