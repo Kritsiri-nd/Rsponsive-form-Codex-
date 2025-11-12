@@ -238,6 +238,11 @@ thead th {
     padding: 0 !important;
   }
 
+  .card-sheet {
+    page-break-inside: avoid;
+    width: 100% !important;
+  }
+
   .contractor-card {
     border: 1px solid #e2e8f0 !important;
     box-shadow: none !important;

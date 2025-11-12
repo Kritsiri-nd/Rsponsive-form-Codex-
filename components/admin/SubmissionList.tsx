@@ -68,10 +68,8 @@ export function SubmissionList({
             cardNo={submission.card_no || '-'}
             fullName={submission.full_name}
             companyName={submission.company || '-'}
-            citizenId={submission.citizen_id || undefined}
             issuedDate={submission.issued_date}
             expiredDate={submission.expired_date}
-            score={submission.score}
             onPrint={() => onPrintSingle(submission.id)}
           />
         </li>
@@ -79,4 +77,3 @@ export function SubmissionList({
     </ul>
   )
 }
-

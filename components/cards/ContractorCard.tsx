@@ -8,10 +8,8 @@ type Props = {
   cardNo: string
   fullName: string
   companyName: string
-  citizenId?: string
   issuedDate: string | null
   expiredDate: string | null
-  score?: number | null
   approverName?: string
   onPrint?: () => void
 }
@@ -27,21 +25,19 @@ export default function ContractorCard({
   cardNo,
   fullName,
   companyName,
-  citizenId,
   issuedDate,
   expiredDate,
-  score,
   approverName = 'Authorized Signature',
   onPrint,
 }: Props) {
   return (
     <div className="contractor-card overflow-hidden rounded-3xl border border-amber-200 bg-white shadow-2xl shadow-amber-300/20">
       <div
-        className="card-sheet flex flex-col gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 print:h-[54mm] print:w-[172mm] print:flex-row print:gap-0 print:p-0"
+        className="card-sheet flex flex-col gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 print:w-[172mm] print:max-w-full print:flex-row print:gap-4 print:p-4"
         style={{ width: '100%', maxWidth: '42rem' }}
       >
         <section
-          className="relative flex flex-1 flex-col justify-between rounded-3xl border border-amber-200 bg-white/80 p-6 print:h-[54mm] print:w-[86mm] print:rounded-none print:border-r"
+          className="relative flex flex-1 flex-col justify-between rounded-3xl border border-amber-200 bg-white/80 p-6 print:min-h-[54mm] print:w-[86mm] print:rounded-none print:border-r print:p-4"
         >
           <header className="flex items-center justify-between">
             <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-sky-500 bg-sky-50 text-[10px] font-semibold uppercase text-sky-600">
@@ -59,32 +55,32 @@ export default function ContractorCard({
             </div>
           </header>
 
-          <div className="mt-5 space-y-3">
-            <Field label="ID No." value={cardNo} highlight />
-            <Field label="Company" value={companyName} />
-            <Field label="Name – Surname" value={fullName} />
-            {citizenId && <Field label="Citizen ID" value={citizenId} />}
-            <div className="grid grid-cols-2 gap-3">
-              <Field label="Issued Date" value={issuedDate ?? '-'} compact />
-              <Field label="Expired Date" value={expiredDate ?? '-'} compact />
+          <div className="mt-5 flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Field label="ID No." value={cardNo} highlight />
+              <Field label="Company" value={companyName} />
+              <Field label="Name – Surname" value={fullName} />
             </div>
-            {typeof score === 'number' && (
-              <Field label="Correct Answers" value={`${score} ข้อ`} />
-            )}
-          </div>
 
-          <div className="mt-6 flex flex-col gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Approver</p>
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3">
-              <div className="relative h-12 w-full max-w-[160px]">
-                <Image src="/signature-mock.svg" alt="Signature placeholder" fill sizes="160px" className="object-contain" />
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:flex-row print:items-start print:gap-6">
+              <div className="flex flex-1 flex-col gap-2">
+                <Field label="Issued Date" value={issuedDate ?? '-'} />
+                <Field label="Expired Date" value={expiredDate ?? '-'} />
               </div>
-              <p className="mt-2 text-sm font-medium text-slate-600">{approverName}</p>
+
+              <div className="flex w-full max-w-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center print:max-w-[180px]">
+                <p className="text-xs font-semibold text-slate-500">ลายเซ็นต์</p>
+                <div className="relative h-12 w-full max-w-[160px]">
+                  <Image src="/signature-mock.svg" alt="Signature placeholder" fill sizes="160px" className="object-contain" />
+                </div>
+                <p className="text-sm font-medium text-slate-600">{approverName}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Approver</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <section className="flex flex-1 flex-col justify-between rounded-3xl border border-emerald-200 bg-white/80 p-6 text-slate-700 print:h-[54mm] print:w-[86mm] print:rounded-none">
+        <section className="flex flex-1 flex-col justify-between rounded-3xl border border-emerald-200 bg-white/80 p-6 text-slate-700 print:min-h-[54mm] print:w-[86mm] print:rounded-none print:p-4">
           <div>
             <div className="flex items-center gap-3">
               <div className="relative h-12 w-12 overflow-hidden rounded-full border border-emerald-400 bg-emerald-50">
@@ -125,23 +121,18 @@ type FieldProps = {
   label: string
   value: string
   highlight?: boolean
-  compact?: boolean
 }
 
-function Field({ label, value, highlight, compact }: FieldProps) {
+function Field({ label, value, highlight }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{label}</span>
-      <span
-        className={cn(
-          'rounded-2xl border border-transparent px-3 py-2 text-sm font-semibold text-slate-800',
-          compact && 'py-1.5 text-xs',
-          highlight ? 'border-amber-200 bg-amber-50 text-amber-700' : 'bg-slate-50'
-        )}
-      >
-        {value}
-      </span>
+    <div
+      className={cn(
+        'flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-2xl border border-transparent bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-800 print:flex-nowrap print:gap-x-4 print:px-2 print:py-1.5 print:text-[12px]',
+        highlight && 'border-amber-200 bg-amber-50 text-amber-700'
+      )}
+    >
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 print:text-[10px]">{label}</span>
+      <span className="flex-1 break-words text-left text-sm font-semibold text-slate-800 print:min-w-0 print:text-[12px]">{value}</span>
     </div>
   )
 }
-
