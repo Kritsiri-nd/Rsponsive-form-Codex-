@@ -12,7 +12,8 @@ type Submission = {
   issued_date: string | null
   expired_date: string | null
   citizen_id: string | null
-  score: number | null
+  department: string | null
+  trainer: string | null
   viewed: boolean
 }
 
@@ -69,9 +70,10 @@ export function SubmissionList({
             fullName={submission.full_name}
             companyName={submission.company || '-'}
             citizenId={submission.citizen_id || undefined}
+            department={submission.department || undefined}
             issuedDate={submission.issued_date}
             expiredDate={submission.expired_date}
-            score={submission.score}
+            trainer={submission.trainer || undefined}
             onPrint={() => onPrintSingle(submission.id)}
           />
         </li>
