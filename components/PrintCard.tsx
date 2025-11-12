@@ -1,77 +1,57 @@
 'use client'
-import React, { useRef } from 'react'
 
 type Props = {
+  id: string
   full_name: string
-  age?: number | null
-  company?: string | null
-  position?: string | null
-  image_url?: string | null
+  company: string | null
+  issued_date: string | null
+  expired_date: string | null
+  onPrint?: () => void
 }
 
-export default function PrintCard(props: Props) {
-  const { full_name, age, company, position, image_url } = props
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  const onPrint = () => {
-    const el = sectionRef.current
-    if (!el) {
-      window.print()
-      return
-    }
-    el.classList.add('is-printing')
-    document.documentElement.classList.add('printing-single')
-    const after = () => {
-      el.classList.remove('is-printing')
-      document.documentElement.classList.remove('printing-single')
-      window.removeEventListener('afterprint', after)
-    }
-    window.addEventListener('afterprint', after)
-    setTimeout(() => window.print(), 0)
-  }
-
+export default function PrintCard({ id, full_name, company, issued_date, expired_date, onPrint }: Props) {
   return (
-    <section ref={sectionRef} className="print-section bg-white rounded-xl shadow p-4 md:p-6 print:shadow-none print:p-0 border border-blue-100">
-      <header className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-blue-700">แบบฟอร์มผู้สมัคร</h2>
+    <div className="bg-white p-6 border rounded-lg shadow print:shadow-none print:border-none">
+
+      <h2 className="text-center text-xl font-bold mb-4">{id}</h2>
+
+      <table className="w-full border-collapse text-sm">
+        <tbody>
+          <tr>
+            <td className="border px-3 py-2 font-semibold w-40">ID NO.</td>
+            <td className="border px-3 py-2 bg-yellow-100">{id}</td>
+          </tr>
+
+          <tr>
+            <td className="border px-3 py-2 font-semibold">Company Name</td>
+            <td className="border px-3 py-2">{company}</td>
+          </tr>
+
+          <tr>
+            <td className="border px-3 py-2 font-semibold">Name Surname</td>
+            <td className="border px-3 py-2">{full_name}</td>
+          </tr>
+
+          <tr>
+            <td className="border px-3 py-2 font-semibold">Issued Date</td>
+            <td className="border px-3 py-2">{issued_date}</td>
+          </tr>
+
+          <tr>
+            <td className="border px-3 py-2 font-semibold">Expired Date</td>
+            <td className="border px-3 py-2">{expired_date}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div className="text-center mt-4 print:hidden">
         <button
-          onClick={onPrint}
-          className="px-3 py-1.5 rounded-lg btn-primary text-sm print:hidden"
+          onClick={onPrint ?? (() => window.print())}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
         >
           Print
         </button>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4">
-        {image_url ? (
-          <img src={image_url} alt={full_name} className="w-40 h-40 object-cover rounded-lg border border-blue-100" />
-        ) : (
-          <div className="w-40 h-40 bg-blue-50 grid place-items-center rounded-lg border border-blue-100 text-blue-700">ไม่มีรูป</div>
-        )}
-
-        <dl className="space-y-2">
-          <div>
-            <dt className="text-sm text-gray-500">ชื่อ-นามสกุล</dt>
-            <dd className="font-medium">{full_name}</dd>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <dt className="text-sm text-gray-500">อายุ</dt>
-              <dd className="font-medium">{age ?? '-'}</dd>
-            </div>
-            <div>
-              <dt className="text-sm text-gray-500">ตำแหน่งงาน</dt>
-              <dd className="font-medium">{position ?? '-'}</dd>
-            </div>
-          </div>
-          <div>
-            <dt className="text-sm text-gray-500">บริษัท</dt>
-            <dd className="font-medium">{company ?? '-'}</dd>
-          </div>
-        </dl>
       </div>
-    </section>
+    </div>
   )
 }
-
-

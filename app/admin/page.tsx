@@ -5,6 +5,7 @@ import PrintCard from '@/components/PrintCard'
 
 type Submission = {
   id: string
+  card_no: string | null
   full_name: string
   age: number | null
   company: string | null
@@ -12,6 +13,8 @@ type Submission = {
   image_url: string | null
   created_at: string
   viewed: boolean
+  issued_date: string | null
+  expired_date: string | null
 }
 
 export default function AdminPage() {
@@ -19,7 +22,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
-  const [printMode, setPrintMode] = useState(false)
+  const [printIds, setPrintIds] = useState<Set<string> | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -87,15 +90,31 @@ export default function AdminPage() {
     setSelectedIds(new Set())
   }
 
-  function printSelected() {
-    if (selectedIds.size === 0) return
-    setPrintMode(true)
+  function triggerPrint(ids: Set<string>) {
+    if (ids.size === 0) return
+    const targets = new Set(ids)
+    setPrintIds(targets)
+
     const after = () => {
-      setPrintMode(false)
+      setPrintIds(null)
       window.removeEventListener('afterprint', after)
     }
+
     window.addEventListener('afterprint', after)
     setTimeout(() => window.print(), 0)
+  }
+
+  function printSelected() {
+    triggerPrint(selectedIds)
+  }
+
+  function printAll() {
+    const allVisible = new Set(filtered.map((r) => r.id))
+    triggerPrint(allVisible)
+  }
+
+  function printSingle(id: string) {
+    triggerPrint(new Set([id]))
   }
 
   return (
@@ -129,6 +148,12 @@ export default function AdminPage() {
             >
               พิมพ์ที่เลือก ({selectedIds.size})
             </button>
+            <button
+              onClick={printAll}
+              className="px-3 py-2 rounded-lg text-sm btn-primary"
+            >
+              พิมพ์ทั้งหมด
+            </button>
           </div>
         </div>
       </header>
@@ -142,7 +167,7 @@ export default function AdminPage() {
           {filtered.map((r) => (
             <li
               key={r.id}
-              className={`${printMode && !selectedIds.has(r.id) ? 'print:hidden' : ''} card rounded-xl shadow-sm p-4 print:p-0 print:shadow-none`}
+              className={`${printIds && !printIds.has(r.id) ? 'print:hidden' : ''} card rounded-xl shadow-sm p-4 print:p-0 print:shadow-none`}
             >
               <div className="flex items-center justify-between mb-3 print:hidden">
                 <div className="text-sm text-gray-500">
@@ -169,11 +194,12 @@ export default function AdminPage() {
               </div>
 
               <PrintCard
+                id={r.card_no || ''}
                 full_name={r.full_name}
-                age={r.age}
                 company={r.company}
-                position={r.position}
-                image_url={r.image_url || undefined}
+                issued_date={r.issued_date}
+                expired_date={r.expired_date}
+                onPrint={() => printSingle(r.id)}
               />
             </li>
           ))}
