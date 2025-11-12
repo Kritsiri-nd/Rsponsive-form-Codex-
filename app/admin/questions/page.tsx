@@ -1,224 +1,247 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { OptionsEditor } from '@/components/questions/OptionsEditor'
+
+type QuestionRecord = {
+  id: string
+  question: string
+  options: string[]
+  correct_index: number
+}
+
+const emptyOptions = ['', '', '', '']
 
 export default function AdminQuestionsPage() {
-  const [rows, setRows] = useState<any[]>([])
-  const [question, setQuestion] = useState('')
-  const [options, setOptions] = useState(['', '', '', ''])
-  const [correct, setCorrect] = useState<number>(0)
+  const [questions, setQuestions] = useState<QuestionRecord[]>([])
   const [loading, setLoading] = useState(true)
 
-  // ✅ edit states
+  const [questionText, setQuestionText] = useState('')
+  const [options, setOptions] = useState([...emptyOptions])
+  const [correctIndex, setCorrectIndex] = useState(0)
+  const [creating, setCreating] = useState(false)
+
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editQuestion, setEditQuestion] = useState('')
-  const [editOptions, setEditOptions] = useState<string[]>(['', '', '', ''])
-  const [editCorrect, setEditCorrect] = useState<number>(0)
+  const [editOptions, setEditOptions] = useState([...emptyOptions])
+  const [editCorrectIndex, setEditCorrectIndex] = useState(0)
+  const [updating, setUpdating] = useState(false)
+
+  const loadQuestions = useCallback(async () => {
+    startTransition(() => setLoading(true))
+    const { data } = await supabase.from('questions').select('*').order('created_at', { ascending: false })
+    startTransition(() => {
+      setQuestions((data || []) as QuestionRecord[])
+      setLoading(false)
+    })
+  }, [])
 
   useEffect(() => {
     loadQuestions()
-  }, [])
+  }, [loadQuestions])
 
-  async function loadQuestions() {
-    setLoading(true)
-    const { data } = await supabase
-      .from('questions')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setRows(data || [])
-    setLoading(false)
+  const totalQuestions = useMemo(() => questions.length, [questions])
+
+  function resetCreateForm() {
+    setQuestionText('')
+    setOptions([...emptyOptions])
+    setCorrectIndex(0)
   }
 
-  async function addQuestion() {
-    if (!question.trim()) return alert('กรุณากรอกคำถาม')
-
-    const cleanOptions = options.map((o) => o.trim()).filter((o) => o.length > 0)
-    if (cleanOptions.length < 2) return alert('ตัวเลือกต้องอย่างน้อย 2 ตัวเลือก')
-
-    const { error } = await supabase.from('questions').insert({
-      question,
-      options: cleanOptions,
-      correct_index: correct,
+  function handleOptionChange(index: number, value: string) {
+    setOptions((prev) => {
+      const next = [...prev]
+      next[index] = value
+      return next
     })
-
-    if (error) return alert(error.message)
-
-    setQuestion('')
-    setOptions(['', '', '', ''])
-    setCorrect(0)
-    loadQuestions()
   }
 
-  function beginEdit(q: any) {
-    setEditingId(q.id)
-    setEditQuestion(q.question || '')
-    const base = Array(4).fill('') as string[]
-    for (let i = 0; i < Math.min(4, (q.options || []).length); i++) base[i] = q.options[i]
-    setEditOptions(base)
-    setEditCorrect(Number(q.correct_index || 0))
+  function handleEditOptionChange(index: number, value: string) {
+    setEditOptions((prev) => {
+      const next = [...prev]
+      next[index] = value
+      return next
+    })
   }
 
-  async function saveEdit(id: string) {
-    if (!editQuestion.trim()) return alert('กรุณากรอกคำถาม')
-    const cleanOptions = editOptions.map((o) => o.trim()).filter((o) => o.length > 0)
+  async function handleCreate() {
+    const trimmedQuestion = questionText.trim()
+    if (!trimmedQuestion) return alert('กรุณากรอกคำถาม')
+
+    const cleanOptions = sanitizeOptions(options)
     if (cleanOptions.length < 2) return alert('ตัวเลือกต้องอย่างน้อย 2 ตัวเลือก')
-    if (editCorrect < 0 || editCorrect >= cleanOptions.length) {
-      return alert('ตำแหน่งเฉลยไม่ถูกต้อง')
-    }
+    if (correctIndex < 0 || correctIndex >= cleanOptions.length) return alert('โปรดเลือกคำตอบที่ถูกต้อง')
 
+    setCreating(true)
     const { error } = await supabase
       .from('questions')
-      .update({ question: editQuestion, options: cleanOptions, correct_index: editCorrect })
-      .eq('id', id)
+      .insert({ question: trimmedQuestion, options: cleanOptions, correct_index: correctIndex })
+    setCreating(false)
 
-    if (error) return alert(error.message)
-    setEditingId(null)
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    resetCreateForm()
     loadQuestions()
+  }
+
+  function beginEdit(question: QuestionRecord) {
+    setEditingId(question.id)
+    setEditQuestion(question.question)
+    setEditOptions([...question.options, ...emptyOptions].slice(0, 4))
+    setEditCorrectIndex(Number(question.correct_index) || 0)
   }
 
   function cancelEdit() {
     setEditingId(null)
   }
 
-  async function deleteQuestion(id: string) {
-    if (!confirm('ลบข้อสอบนี้?')) return
+  async function handleUpdate(id: string) {
+    const trimmedQuestion = editQuestion.trim()
+    if (!trimmedQuestion) return alert('กรุณากรอกคำถาม')
+
+    const cleanOptions = sanitizeOptions(editOptions)
+    if (cleanOptions.length < 2) return alert('ตัวเลือกต้องอย่างน้อย 2 ตัวเลือก')
+    if (editCorrectIndex < 0 || editCorrectIndex >= cleanOptions.length) return alert('โปรดเลือกคำตอบที่ถูกต้อง')
+
+    setUpdating(true)
+    const { error } = await supabase
+      .from('questions')
+      .update({ question: trimmedQuestion, options: cleanOptions, correct_index: editCorrectIndex })
+      .eq('id', id)
+    setUpdating(false)
+
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    setEditingId(null)
+    loadQuestions()
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('ยืนยันการลบข้อสอบนี้?')) return
     await supabase.from('questions').delete().eq('id', id)
     loadQuestions()
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold text-slate-900">จัดการข้อสอบความปลอดภัย</h1>
+        <p className="text-sm text-slate-500">เพิ่มและปรับปรุงข้อสอบสำหรับใช้ในแบบทดสอบผู้รับเหมา</p>
+      </header>
 
-      <h1 className="text-2xl font-bold text-white">จัดการข้อสอบ</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>เพิ่มข้อสอบใหม่</CardTitle>
+          <CardDescription>
+            กำหนดคำถาม ตัวเลือก และคำตอบที่ถูกต้อง ข้อสอบทั้งหมด {totalQuestions} ข้อ
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-slate-600">คำถาม</label>
+            <Input value={questionText} onChange={(event) => setQuestionText(event.target.value)} placeholder="ใส่คำถาม" />
+          </div>
 
-      {/* ✅ Form เพิ่มข้อสอบ */}
-      <div className="bg-white p-5 rounded-lg shadow space-y-4">
-        <input
-          className="w-full border px-3 py-2 rounded"
-          placeholder="คำถาม"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-        />
+          <OptionsEditor
+            name="create-options"
+            options={options}
+            correctIndex={correctIndex}
+            onOptionChange={handleOptionChange}
+            onCorrectChange={setCorrectIndex}
+          />
 
-        <div className="space-y-2">
-          {options.map((opt, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <input
-                className="border flex-1 px-3 py-1 rounded"
-                placeholder={`ตัวเลือกที่ ${idx + 1}`}
-                value={options[idx]}
-                onChange={(e) => {
-                  const copy = [...options]
-                  copy[idx] = e.target.value
-                  setOptions(copy)
-                }}
-              />
+          <div className="flex justify-end">
+            <Button onClick={handleCreate} disabled={creating}>
+              {creating ? 'กำลังบันทึก...' : 'เพิ่มข้อสอบ'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-              <label className="flex items-center gap-1">
-                <input
-                  type="radio"
-                  checked={correct === idx}
-                  onChange={() => setCorrect(idx)}
-                />
-                เฉลย
-              </label>
-            </div>
-          ))}
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>รายการข้อสอบทั้งหมด</CardTitle>
+          <CardDescription>แก้ไขหรือลบข้อสอบที่มีอยู่ เพื่อให้เนื้อหาทันสมัย</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <p className="text-sm text-slate-500">กำลังโหลดข้อมูล...</p>
+          ) : questions.length === 0 ? (
+            <p className="text-sm text-slate-500">ยังไม่มีข้อสอบ</p>
+          ) : (
+            <ul className="space-y-4">
+              {questions.map((question) => (
+                <li key={question.id} className="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm">
+                  {editingId === question.id ? (
+                    <div className="space-y-4">
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium text-slate-600">คำถาม</label>
+                        <Input value={editQuestion} onChange={(event) => setEditQuestion(event.target.value)} />
+                      </div>
 
-        <button
-          onClick={addQuestion}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-        >
-          เพิ่มข้อสอบ
-        </button>
-      </div>
+                      <OptionsEditor
+                        name={`edit-${question.id}`}
+                        options={editOptions}
+                        correctIndex={editCorrectIndex}
+                        onOptionChange={handleEditOptionChange}
+                        onCorrectChange={setEditCorrectIndex}
+                      />
 
-      {/* ✅ รายการข้อสอบ */}
-      <div className="bg-white p-5 rounded-lg shadow">
-        {loading ? (
-          <p>กำลังโหลด...</p>
-        ) : rows.length === 0 ? (
-          <p>ยังไม่มีข้อสอบ</p>
-        ) : (
-          <ul className="space-y-4">
-            {rows.map((q) => (
-              <li key={q.id} className="border p-4 rounded-lg">
-                {editingId === q.id ? (
-                  <div className="space-y-3">
-                    <input
-                      className="w-full border px-3 py-2 rounded"
-                      value={editQuestion}
-                      onChange={(e) => setEditQuestion(e.target.value)}
-                    />
-
-                    <div className="space-y-2">
-                      {editOptions.map((opt, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <input
-                            className="border flex-1 px-3 py-1 rounded"
-                            placeholder={`ตัวเลือกที่ ${idx + 1}`}
-                            value={editOptions[idx]}
-                            onChange={(e) => {
-                              const copy = [...editOptions]
-                              copy[idx] = e.target.value
-                              setEditOptions(copy)
-                            }}
-                          />
-                          <label className="flex items-center gap-1">
-                            <input
-                              type="radio"
-                              checked={editCorrect === idx}
-                              onChange={() => setEditCorrect(idx)}
-                            />
-                            เฉลย
-                          </label>
+                      <div className="flex items-center gap-2">
+                        <Button onClick={() => handleUpdate(question.id)} disabled={updating}>
+                          {updating ? 'กำลังบันทึก...' : 'บันทึก' }
+                        </Button>
+                        <Button variant="ghost" onClick={cancelEdit}>
+                          ยกเลิก
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <p className="font-semibold text-slate-900">{question.question}</p>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" onClick={() => beginEdit(question)}>
+                            แก้ไข
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => handleDelete(question.id)}>
+                            ลบ
+                          </Button>
                         </div>
-                      ))}
+                      </div>
+                      <ol className="ml-5 list-decimal space-y-1 text-sm text-slate-700">
+                        {question.options.map((option, index) => (
+                          <li
+                            key={index}
+                            className={index === question.correct_index ? 'font-semibold text-emerald-600' : ''}
+                          >
+                            {option}
+                          </li>
+                        ))}
+                      </ol>
                     </div>
-
-                    <div className="flex gap-2">
-                      <button onClick={() => saveEdit(q.id)} className="px-3 py-1 bg-green-600 text-white rounded">บันทึก</button>
-                      <button onClick={cancelEdit} className="px-3 py-1 bg-gray-300 rounded">ยกเลิก</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <div className="font-semibold">{q.question}</div>
-                    <ul className="ml-4 mt-2 text-sm list-disc">
-                      {q.options.map((o: string, i: number) => (
-                        <li
-                          key={i}
-                          className={i === q.correct_index ? 'text-green-600 font-bold' : ''}
-                        >
-                          {o}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-3 flex gap-2">
-                      <button
-                        onClick={() => beginEdit(q)}
-                        className="px-3 py-1 bg-blue-600 text-white rounded"
-                      >
-                        แก้ไข
-                      </button>
-                      <button
-                        onClick={() => deleteQuestion(q.id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded"
-                      >
-                        ลบ
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
+
+function sanitizeOptions(options: string[]) {
+  return options.map((option) => option.trim()).filter((option) => option.length > 0)
+}
+
