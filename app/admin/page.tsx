@@ -15,14 +15,14 @@ type Submission = {
   issued_date: string | null
   expired_date: string | null
   citizen_id: string | null
-  department: string | null
-  trainer: string | null
+  score: number | null
 }
 
 export default function AdminPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
+  const [issuedDateFilter, setIssuedDateFilter] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [printIds, setPrintIds] = useState<Set<string> | null>(null)
 
@@ -69,13 +69,20 @@ export default function AdminPage() {
 
   const filtered = useMemo(() => {
     const keyword = query.trim().toLowerCase()
-    if (!keyword) return submissions
-    return submissions.filter((item) =>
-      [item.card_no, item.full_name, item.company, item.citizen_id, item.department]
-        .filter(Boolean)
-        .some((value) => String(value).toLowerCase().includes(keyword))
-    )
-  }, [submissions, query])
+    return submissions.filter((item) => {
+      const matchKeyword = !keyword
+        ? true
+        : [item.card_no, item.full_name, item.company, item.citizen_id]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(keyword))
+
+      const matchIssuedDate = !issuedDateFilter
+        ? true
+        : item.issued_date?.startsWith(issuedDateFilter) ?? false
+
+      return matchKeyword && matchIssuedDate
+    })
+  }, [submissions, query, issuedDateFilter])
 
   function toggleSelected(id: string, checked: boolean) {
     setSelectedIds((prev) => {
@@ -137,6 +144,8 @@ export default function AdminPage() {
       <SubmissionsToolbar
         query={query}
         onQueryChange={setQuery}
+        issuedDate={issuedDateFilter}
+        onIssuedDateChange={setIssuedDateFilter}
         onSelectAll={selectAllVisible}
         onClearSelection={clearSelection}
         onPrintSelected={printSelected}
