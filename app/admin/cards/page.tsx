@@ -1,11 +1,14 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 
 type CardRecord = {
-  card_no: string | null
   id: string
+  card_no: string | null
   full_name: string
   citizen_id: string | null
   company: string | null
@@ -15,132 +18,160 @@ type CardRecord = {
 }
 
 export default function ContractorCardAdminPage() {
-  const [rows, setRows] = useState<CardRecord[]>([])
+  const [records, setRecords] = useState<CardRecord[]>([])
   const [query, setQuery] = useState('')
-  const [filterCompany, setFilterCompany] = useState('')
+  const [companyFilter, setCompanyFilter] = useState('ทั้งหมด')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('submissions')
-        .select('*')
-        .order('created_at', { ascending: false })
+  const loadCards = useCallback(async () => {
+    startTransition(() => setLoading(true))
+    const { data, error } = await supabase
+      .from('submissions')
+      .select('*')
+      .order('created_at', { ascending: false })
 
+    startTransition(() => {
       if (!error && data) {
-        setRows(data as CardRecord[])
+        setRecords(data as CardRecord[])
       }
       setLoading(false)
-    }
-    load()
+    })
   }, [])
 
-  function daysLeft(expired: string | null) {
-    if (!expired) return '-'
-    const [d, m, y] = expired.split('/')
-    const exp = new Date(Number(y) + 2500 - 543, Number(m) - 1, Number(d)) // แปลงปีไทยกลับสากล
-    const diff = Math.ceil((exp.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-    return diff < 0 ? 'หมดอายุแล้ว' : diff + ' วัน'
-  }
+  useEffect(() => {
+    loadCards()
+  }, [loadCards])
+
+  const companies = useMemo(() => {
+    const set = new Set<string>()
+    records.forEach((item) => {
+      if (item.company) set.add(item.company)
+    })
+    return ['ทั้งหมด', ...Array.from(set)]
+  }, [records])
 
   const filtered = useMemo(() => {
-    let data = rows
+    const keyword = query.trim().toLowerCase()
+    return records.filter((record) => {
+      const matchesKeyword = keyword
+        ? [record.card_no, record.full_name, record.company, record.citizen_id, record.trainer]
+            .filter(Boolean)
+            .some((value) => String(value).toLowerCase().includes(keyword))
+        : true
 
-    if (query.trim()) {
-      const q = query.toLowerCase()
-      data = data.filter((r) =>
-        [
-          r.card_no,
-          r.full_name,
-          r.company,
-          r.citizen_id,
-          r.issued_date,
-          r.expired_date,
-          r.trainer,
-        ]
-          .join(' ')
-          .toLowerCase()
-          .includes(q)
-      )
-    }
+      const matchesCompany =
+        companyFilter === 'ทั้งหมด' ? true : record.company?.toLowerCase() === companyFilter.toLowerCase()
 
-    if (filterCompany) data = data.filter((r) => r.company === filterCompany)
-
-    return data
-  }, [rows, query, filterCompany])
-
-  const uniqueCompany = Array.from(new Set(rows.map((r) => r.company).filter(Boolean)))
-  // department filter removed per request
+      return matchesKeyword && matchesCompany
+    })
+  }, [records, query, companyFilter])
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
+      <header className="space-y-2">
+        <h1 className="text-3xl font-semibold text-slate-900">รายการบัตรผู้รับเหมา</h1>
+        <p className="text-sm text-slate-500">
+          ตรวจสอบสถานะบัตรและวันหมดอายุ พร้อมค้นหาตามชื่อ บริษัท หรือหมายเลขบัตร
+        </p>
+      </header>
 
-      <h1 className="text-2xl font-bold text-white mb-3">Contractor Card – Admin</h1>
+      <Card>
+        <CardHeader>
+          <CardTitle>ค้นหาและกรองข้อมูล</CardTitle>
+          <CardDescription>เริ่มพิมพ์เพื่อค้นหาทันที หรือกรองตามบริษัทที่ต้องการ</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 md:grid-cols-3">
+          <div className="md:col-span-2">
+            <label className="text-sm font-medium text-slate-600">ค้นหา</label>
+            <Input
+              placeholder="ค้นหาบัตรจากชื่อ, บริษัท หรือเลขบัตร"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-slate-600">บริษัท</label>
+            <Select value={companyFilter} onChange={(event) => setCompanyFilter(event.target.value)}>
+              {companies.map((company) => (
+                <option key={company} value={company}>
+                  {company}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* ✅ Search + Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input
-          placeholder="ค้นหา..."
-          className="border rounded-lg px-3 py-2"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-
-        <select
-          className="border rounded-lg px-3 py-2"
-          value={filterCompany}
-          onChange={(e) => setFilterCompany(e.target.value)}
-        >
-          <option value="">บริษัททั้งหมด</option>
-          {uniqueCompany.map((c) => (
-            <option key={c} value={c || ''}>{c}</option>
-          ))}
-        </select>
-        <div />
-      </div>
-
-      {/* ✅ Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow p-4">
-        <table className="w-full table-auto border-collapse text-sm">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="border px-3 py-2">Card No</th>
-              <th className="border px-3 py-2">Name Surname</th>
-              <th className="border px-3 py-2">Citizen ID</th>
-              <th className="border px-3 py-2">Company</th>
-              <th className="border px-3 py-2">Issued Date</th>
-              <th className="border px-3 py-2">Expired Date</th>
-              <th className="border px-3 py-2">วันที่เหลือ</th>
-              <th className="border px-3 py-2">Trainer</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {loading ? (
-              <tr><td colSpan={9} className="text-center py-4">กำลังโหลด...</td></tr>
-            ) : filtered.length === 0 ? (
-              <tr><td colSpan={9} className="text-center py-4">ไม่พบข้อมูล</td></tr>
-            ) : (
-              filtered.map((r) => (
-                <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="border px-3 py-2">{r.card_no}</td>
-                  <td className="border px-3 py-2">{r.full_name}</td>
-                  <td className="border px-3 py-2">{r.citizen_id}</td>
-                  <td className="border px-3 py-2">{r.company}</td>
-                  <td className="border px-3 py-2">{r.issued_date}</td>
-                  <td className="border px-3 py-2">{r.expired_date}</td>
-                  <td className="border px-3 py-2">
-                    {daysLeft(r.expired_date)}
-                  </td>
-                  <td className="border px-3 py-2">{r.trainer}</td>
+      <Card>
+        <CardHeader>
+          <CardTitle>ผลการค้นหา ({filtered.length})</CardTitle>
+          <CardDescription>ข้อมูลล่าสุดเรียงตามเวลาที่สร้างบัตร</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto text-left text-sm">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">เลขบัตร</th>
+                  <th className="px-4 py-3 font-semibold">ชื่อ-นามสกุล</th>
+                  <th className="px-4 py-3 font-semibold">บัตรประชาชน</th>
+                  <th className="px-4 py-3 font-semibold">บริษัท</th>
+                  <th className="px-4 py-3 font-semibold">ออกบัตร</th>
+                  <th className="px-4 py-3 font-semibold">หมดอายุ</th>
+                  <th className="px-4 py-3 font-semibold">สถานะ</th>
+                  <th className="px-4 py-3 font-semibold">ผู้ฝึกอบรม</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
+                      กำลังโหลดข้อมูล...
+                    </td>
+                  </tr>
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-slate-500">
+                      ไม่พบบัตรที่ตรงกับเงื่อนไข
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((record) => {
+                    const status = getExpiryStatus(record.expired_date)
+                    return (
+                      <tr key={record.id} className="border-t border-slate-100">
+                        <td className="px-4 py-3 font-semibold text-slate-900">{record.card_no}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.full_name}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.citizen_id || '-'}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.company || '-'}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.issued_date || '-'}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.expired_date || '-'}</td>
+                        <td className="px-4 py-3 text-slate-700">{status}</td>
+                        <td className="px-4 py-3 text-slate-700">{record.trainer || '-'}</td>
+                      </tr>
+                    )
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
+
+function getExpiryStatus(expired: string | null) {
+  if (!expired) return '-'
+  const [day, month, year] = expired.split('/')
+  if (!day || !month || !year) return '-'
+
+  const parsedYear = Number(year) + 2500 - 543
+  const date = new Date(parsedYear, Number(month) - 1, Number(day))
+  const diff = Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+
+  if (diff < 0) return 'หมดอายุแล้ว'
+  if (diff === 0) return 'หมดอายุวันนี้'
+  return `เหลือ ${diff} วัน`
+}
+

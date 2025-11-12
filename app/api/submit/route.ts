@@ -73,8 +73,9 @@ export async function POST(req: Request) {
     console.log("✅ INSERT OK")
     return NextResponse.json({ ok: true })
 
-  } catch (e: any) {
-    console.log("❌ SERVER ERROR =", e)
-    return NextResponse.json({ error: e.message }, { status: 500 })
+  } catch (error: unknown) {
+    console.log("❌ SERVER ERROR =", error)
+    const message = error instanceof Error ? error.message : 'unexpected_error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
