@@ -261,9 +261,9 @@ thead th {
   }
 
   .contractor-card {
-    width: 171.2mm !important;
-    min-width: 171.2mm !important;
-    max-width: 171.2mm !important;
+    width: 175.2mm !important;
+    min-width: 175.2mm !important;
+    max-width: 175.2mm !important;
     height: 54mm !important;
     min-height: 54mm !important;
     max-height: 54mm !important;
@@ -278,15 +278,15 @@ thead th {
   }
 
   .contractor-card .card-sheet {
-    width: 171.2mm !important;
-    min-width: 171.2mm !important;
-    max-width: 171.2mm !important;
+    width: 175.2mm !important;
+    min-width: 175.2mm !important;
+    max-width: 175.2mm !important;
     height: 54mm !important;
     min-height: 54mm !important;
     max-height: 54mm !important;
     background: #ffffff !important;
     padding: 0 !important;
-    gap: 0 !important;
+    gap: 4mm !important;
     display: flex !important;
     flex-direction: row !important;
     flex-shrink: 0 !important;
@@ -325,7 +325,17 @@ thead th {
     font-size: inherit !important;
   }
 
+  .card-face ol,
   .card-face ul {
     margin-top: 2mm !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .card-face ol li,
+  .card-face ul li {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
 }

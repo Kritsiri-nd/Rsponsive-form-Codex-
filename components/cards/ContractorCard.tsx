@@ -96,14 +96,13 @@ export default function ContractorCard({
               </div>
             </div>
 
-            <ul className="mt-5 space-y-2.5 text-sm leading-relaxed text-slate-600 print:mt-2 print:space-y-1 print:text-[6px] print:leading-tight">
+            <ol className="mt-5 space-y-2.5 text-sm leading-relaxed text-slate-600 print:mt-2 print:space-y-1 print:text-[6px] print:leading-tight list-decimal list-inside">
               {instructionItems.map((item, index) => (
-                <li key={index} className="flex gap-2 print:gap-1">
-                  <span className="mt-1.5 h-2 w-2 flex-none rounded-full bg-emerald-400 print:mt-0.5 print:h-1 print:w-1" aria-hidden />
-                  <span>{item}</span>
+                <li key={index} className="break-words print:break-words">
+                  <span className="break-words print:break-words">{item}</span>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
 
           <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-center text-sm text-emerald-600 print:mt-2 print:p-1.5 print:text-[6px]">
