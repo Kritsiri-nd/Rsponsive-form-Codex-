@@ -89,7 +89,7 @@ export default function ContractorCard({
                 </div>
               </div>
               <div className="relative h-10 w-32 print:h-6 print:w-24">
-                <Image src="/signature-mock.svg" alt="Signature placeholder" fill sizes="128px" className="object-contain" />
+                <Image src="/signature.jpg" alt="Signature placeholder" fill sizes="128px" className="object-contain" />
               </div>
               <p className="text-xs font-semibold print:text-[6px]">ออกบัตรโดย : {approverName}</p>
               <p className="text-[10px] uppercase tracking-wide print:text-[6px]">Safety Officer</p>
@@ -98,26 +98,20 @@ export default function ContractorCard({
         </section>
 
         <section className="card-face card-face--back hidden aspect-[85.6/54] flex-col overflow-hidden bg-white print:flex print:max-w-none print:rounded-none print:border print:border-blue-900">
-          <header className="flex items-center justify-between bg-[#0A2C84] px-6 py-3 text-white print:px-4 print:py-2">
-            <div className="flex items-center gap-3">
-              <div className="relative h-12 w-12 overflow-hidden rounded-md border border-white/30 bg-white print:h-8 print:w-8">
-                <Image src="/Nittan-logo.png" alt="Nittan logo" fill sizes="48px" className="object-contain p-2" />
-              </div>
-              <h2 className="text-[14px] font-semibold tracking-wide print:text-[8px]">เงื่อนไขและข้อปฏิบัติ</h2>
-            </div>
-            <div className="relative h-12 w-12 overflow-hidden rounded-md border border-white/30 bg-white print:h-8 print:w-8">
-              <Image src="/safety-logo.jpg" alt="Safety logo" fill sizes="48px" className="object-contain p-2" />
-            </div>
+          <header className="flex items-center justify-center bg-blue-600 px-6 py-8 text-white print:px-4 print:py-2">
+              <h2 className="text-[14px] item-center font-semibold tracking-wide print:text-[8px] relative">เงื่อนไขและข้อปฏิบัติ</h2>
+              <Image src="/safety-logo.jpg" alt="Signature placeholder" width={20} height={20} className="object-contain absolute right-30" />
           </header>
 
-          <article className="flex flex-1 flex-col justify-between px-6 py-5 text-[#0A2C84] print:px-4 print:py-3">
+          <article className="flex flex-1 flex-col justify-between px-6 py-5 text-black print:px-4 print:py-3">
             <ol className="list-decimal space-y-2.5 pl-5 text-sm leading-relaxed print:space-y-1.5 print:text-[7px] print:leading-snug">
               {instructionItems.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
             </ol>
-            <div className="rounded-2xl border border-[#0A2C84] bg-white px-4 py-3 text-center text-sm font-semibold text-[#0A2C84] shadow-sm print:px-3 print:py-2 print:text-[7px]">
-              *** ติดต่อแผนกความปลอดภัย โทร. 038-743-486-9 ต่อ 223 ***
+            <div className="text-center text-sm print:px-3 print:py-2 print:text-[7px]">
+              <p>*** ติดต่อแผนกความปลอดภัย ***</p>
+              <p>โทร. 038-743-486-9 ต่อ 223</p>
             </div>
           </article>
         </section>

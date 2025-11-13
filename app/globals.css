@@ -223,7 +223,7 @@ thead th {
 
   body {
     margin: 0;
-    background: #ffffff !important;
+    
   }
 
   main {
@@ -300,7 +300,6 @@ thead th {
     min-height: 54mm !important;
     max-height: 54mm !important;
     border-radius: 0 !important;
-    padding: 3mm !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     box-sizing: border-box;
