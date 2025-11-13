@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 
 type CardRecord = {
   id: string
@@ -71,6 +72,56 @@ export default function ContractorCardAdminPage() {
     })
   }, [records, query, companyFilter, issuedDateFilter])
 
+  const exportFilteredToExcel = useCallback(() => {
+    if (filtered.length === 0) return
+
+    const escapeCell = (value: string | number | null) =>
+      String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+
+    const headers = [
+      'Card No.',
+      'Full Name',
+      'Citizen ID',
+      'Company',
+      'Issued Date',
+      'Expired Date',
+      'Status',
+      'Score',
+    ]
+
+    const headerRow = `<tr>${headers.map((header) => `<th>${header}</th>`).join('')}</tr>`
+    const bodyRows = filtered
+      .map((item) => {
+        const cells = [
+          escapeCell(item.card_no),
+          escapeCell(item.full_name),
+          escapeCell(item.citizen_id),
+          escapeCell(item.company),
+          escapeCell(item.issued_date),
+          escapeCell(item.expired_date),
+          escapeCell(getExpiryStatus(item.expired_date)),
+          escapeCell(typeof item.score === 'number' ? `${item.score}` : ''),
+        ]
+        return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
+      })
+      .join('')
+
+    const htmlTable = `<table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>`
+    const blob = new Blob(['\ufeff' + htmlTable], { type: 'application/vnd.ms-excel' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    const timestamp = new Date().toISOString().split('T')[0]
+    link.download = `contractor-cards-${timestamp}.xls`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }, [filtered])
+
   return (
     <div className="space-y-6">
       <header className="space-y-2">
@@ -116,9 +167,14 @@ export default function ContractorCardAdminPage() {
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>ผลการค้นหา ({filtered.length})</CardTitle>
-          <CardDescription>ข้อมูลล่าสุดเรียงตามเวลาที่สร้างบัตร</CardDescription>
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <CardTitle>ผลการค้นหา ({filtered.length})</CardTitle>
+            <CardDescription>ข้อมูลล่าสุดเรียงตามเวลาที่สร้างบัตร</CardDescription>
+          </div>
+          <Button variant="outline" onClick={exportFilteredToExcel} disabled={filtered.length === 0}>
+            ส่งออก Excel
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
