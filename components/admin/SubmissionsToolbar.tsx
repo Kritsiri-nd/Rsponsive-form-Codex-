@@ -12,6 +12,7 @@ type Props = {
   onClearSelection: () => void
   onPrintSelected: () => void
   onPrintAll: () => void
+  onExportExcel: () => void
   selectedCount: number
   totalVisible: number
 }
@@ -25,6 +26,7 @@ export function SubmissionsToolbar({
   onClearSelection,
   onPrintSelected,
   onPrintAll,
+  onExportExcel,
   selectedCount,
   totalVisible,
 }: Props) {
@@ -50,6 +52,14 @@ export function SubmissionsToolbar({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onExportExcel}
+          disabled={totalVisible === 0}
+        >
+          ส่งออก Excel
+        </Button>
         <Button variant="outline" size="sm" onClick={onSelectAll} disabled={totalVisible === 0}>
           เลือกทั้งหมด
         </Button>
