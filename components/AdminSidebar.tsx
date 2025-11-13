@@ -1,12 +1,21 @@
 'use client'
 
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-export default function AdminSidebar() {
+type AdminSidebarProps = {
+  userEmail?: string
+}
+
+export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
   const [open, setOpen] = useState(true)
   const pathname = usePathname()
+
+  function handleSignOut() {
+    signOut({ callbackUrl: '/login' })
+  }
 
   return (
     <>
@@ -56,6 +65,22 @@ export default function AdminSidebar() {
               </Link>
             </li>
           </ul>
+
+          <div className="mt-8 space-y-3 rounded-2xl border border-white/40 bg-white/60 p-4 text-left text-sm shadow-inner shadow-white/40">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Signed in as</p>
+              <p className="truncate font-medium text-slate-900" title={userEmail ?? 'Unknown'}>
+                {userEmail ?? 'Anonymous admin'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full rounded-xl bg-slate-900 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              ออกจากระบบ
+            </button>
+          </div>
         </nav>
       </aside>
 
