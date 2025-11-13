@@ -132,54 +132,6 @@ export default function AdminPage() {
     triggerPrint(new Set([id]))
   }
 
-  const exportVisibleToExcel = useCallback(() => {
-    if (filtered.length === 0) return
-
-    const escapeCell = (value: string | number | null) =>
-      String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-
-    const headers = [
-      'Card No.',
-      'Full Name',
-      'Company',
-      'Issued Date',
-      'Expired Date',
-      'Citizen ID',
-      'Score',
-    ]
-
-    const headerRow = `<tr>${headers.map((header) => `<th>${header}</th>`).join('')}</tr>`
-    const bodyRows = filtered
-      .map((item) => {
-        const cells = [
-          escapeCell(item.card_no),
-          escapeCell(item.full_name),
-          escapeCell(item.company),
-          escapeCell(item.issued_date),
-          escapeCell(item.expired_date),
-          escapeCell(item.citizen_id),
-          escapeCell(item.score ?? ''),
-        ]
-        return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
-      })
-      .join('')
-
-    const htmlTable = `<table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>`
-    const blob = new Blob(['\ufeff' + htmlTable], { type: 'application/vnd.ms-excel' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    const timestamp = new Date().toISOString().split('T')[0]
-    link.download = `contractor-cards-${timestamp}.xls`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }, [filtered])
-
   return (
     <div className="space-y-6">
       <header className="space-y-2 print:hidden">
@@ -198,7 +150,6 @@ export default function AdminPage() {
         onClearSelection={clearSelection}
         onPrintSelected={printSelected}
         onPrintAll={printAll}
-        onExportExcel={exportVisibleToExcel}
         selectedCount={selectedIds.size}
         totalVisible={filtered.length}
       />
