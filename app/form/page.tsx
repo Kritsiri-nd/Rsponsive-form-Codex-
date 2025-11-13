@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -141,6 +142,15 @@ export default function PublicFormPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
+      <div className="flex justify-end">
+        <Link
+          href="/login"
+          className="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
+        >
+          เข้าสู่ระบบผู้ดูแล
+        </Link>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">แบบทดสอบความปลอดภัยสำหรับผู้รับเหมา</CardTitle>
@@ -241,4 +251,3 @@ function SkeletonBlock() {
     </div>
   )
 }
-
