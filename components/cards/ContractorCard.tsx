@@ -36,10 +36,10 @@ export default function ContractorCard({
 
   return (
     <div className="contractor-card overflow-hidden rounded-3xl border border-amber-200 bg-white shadow-2xl shadow-amber-300/20">
-      <div className="card-sheet mx-auto grid w-full max-w-[720px] gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 md:grid-cols-2 print:flex print:w-auto print:max-w-none print:bg-white print:p-0 print:gap-0">
+      <div className="card-sheet mx-auto grid w-full max-w-[800px] gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 md:grid-cols-1 print:flex print:w-auto print:max-w-none print:bg-white print:p-0 print:gap-0">
         <section
           style={faceStyle}
-          className="card-face card-face--front relative flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-gray-200 bg-white/90 p-7 shadow-sm print:p-3 print:shadow-none"
+          className="card-face card-face--front relative flex w-full max-w-[800px] flex-col justify-between overflow-visible rounded-3xl border border-gray-200 bg-white/90 p-7 shadow-sm print:max-w-none print:overflow-hidden print:p-3 print:shadow-none"
         >
           <header className="flex items-center justify-between print:gap-2">
             <div className="grid h-16 w-16 place-items-center rounded-full border-2 border-sky-500 bg-sky-50 text-xs font-semibold uppercase text-sky-600 print:h-7 print:w-7 print:text-[6px]">
@@ -83,7 +83,7 @@ export default function ContractorCard({
 
         <section
           style={faceStyle}
-          className="card-face card-face--back flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-gray-200 bg-white/90 p-7 text-slate-700 shadow-sm print:p-3 print:shadow-none"
+          className="card-face card-face--back hidden flex-col justify-between overflow-visible rounded-3xl border border-gray-200 bg-white/90 p-7 text-slate-700 shadow-sm print:flex print:overflow-hidden print:p-3 print:shadow-none"
         >
           <div>
             <div className="flex items-center gap-3 print:gap-1.5">
@@ -96,10 +96,10 @@ export default function ContractorCard({
               </div>
             </div>
 
-            <ol className="mt-5 space-y-2.5 text-sm leading-relaxed text-slate-600 print:mt-2 print:space-y-1 print:text-[6px] print:leading-tight list-decimal list-inside">
+            <ol className="mt-5 space-y-2.5 text-sm leading-relaxed text-slate-600 print:mt-2 print:space-y-1 print:text-[8px] print:leading-tight list-decimal list-outside pl-5 print:pl-4 break-words">
               {instructionItems.map((item, index) => (
-                <li key={index} className="break-words print:break-words">
-                  <span className="break-words print:break-words">{item}</span>
+                <li key={index} className="break-words">
+                  <span className="break-words">{item}</span>
                 </li>
               ))}
             </ol>

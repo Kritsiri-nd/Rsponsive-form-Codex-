@@ -330,6 +330,7 @@ thead th {
     margin-top: 2mm !important;
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
+    list-style-position: outside !important;
   }
 
   .card-face ol li,
@@ -337,5 +338,39 @@ thead th {
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
     word-break: break-word !important;
+    display: list-item !important;
+    list-style-position: outside !important;
   }
+}
+
+/* Screen view: Better text wrapping for card back */
+.card-face--back {
+  overflow: visible !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.card-face--back ol {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.card-face--back ol li {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  display: list-item !important;
+}
+
+.card-face--back ol li span {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  display: inline-block !important;
+  width: 100% !important;
 }
