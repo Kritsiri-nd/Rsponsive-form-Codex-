@@ -217,11 +217,12 @@ thead th {
 
 @media print {
   @page {
-    size: A4;
-    margin: 10mm;
+    size: 85.6mm 54mm;
+    margin: 0;
   }
 
   body {
+    margin: 0;
     background: #ffffff !important;
   }
 
@@ -238,13 +239,58 @@ thead th {
     padding: 0 !important;
   }
 
-  .card-sheet {
-    page-break-inside: avoid;
-    width: 100% !important;
+  .contractor-card {
+    width: 85.6mm !important;
+    min-height: 54mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
   }
 
-  .contractor-card {
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: none !important;
+  .contractor-card .card-sheet {
+    width: 85.6mm !important;
+    min-height: 54mm !important;
+    max-width: none !important;
+    background: #ffffff !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    display: block !important;
+  }
+
+  .contractor-card .card-face {
+    width: 85.6mm !important;
+    height: 54mm !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    padding: 4mm !important;
+    page-break-after: always;
+    box-sizing: border-box;
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+  }
+
+  .contractor-card .card-face:last-of-type {
+    page-break-after: auto;
+  }
+
+  .contractor-card .card-face--front {
+    border: 1px solid #facc15 !important;
+  }
+
+  .contractor-card .card-face--back {
+    border: 1px solid #bbf7d0 !important;
+  }
+
+  .contractor-card .card-face * {
+    font-size: inherit;
+  }
+
+  .contractor-card header {
+    font-size: 11px;
+  }
+
+  .card-face ul {
+    margin-top: 6px !important;
   }
 }

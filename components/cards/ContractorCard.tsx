@@ -33,24 +33,24 @@ export default function ContractorCard({
   return (
     <div className="contractor-card overflow-hidden rounded-3xl border border-amber-200 bg-white shadow-2xl shadow-amber-300/20">
       <div
-        className="card-sheet flex flex-col gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 print:w-[172mm] print:max-w-full print:flex-row print:gap-4 print:p-4"
+        className="card-sheet flex flex-col gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 print:flex-col print:gap-0 print:bg-white print:p-0"
         style={{ width: '100%', maxWidth: '42rem' }}
       >
         <section
-          className="relative flex flex-1 flex-col justify-between rounded-3xl border border-amber-200 bg-white/80 p-6 print:min-h-[54mm] print:w-[86mm] print:rounded-none print:border-r print:p-4"
+          className="card-face card-face--front relative flex flex-1 flex-col justify-between rounded-3xl border border-amber-200 bg-white/80 p-6"
         >
-          <header className="flex items-center justify-between">
-            <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-sky-500 bg-sky-50 text-[10px] font-semibold uppercase text-sky-600">
+          <header className="flex items-center justify-between print:gap-2">
+            <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-sky-500 bg-sky-50 text-[10px] font-semibold uppercase text-sky-600 print:h-10 print:w-10 print:text-[8px]">
               Nittan
             </div>
-            <div className="flex flex-1 flex-col items-center gap-1 px-4 text-center">
-              <p className="text-[11px] font-semibold tracking-[0.25em] text-slate-600">
+            <div className="flex flex-1 flex-col items-center gap-1 px-4 text-center print:px-2">
+              <p className="text-[11px] font-semibold tracking-[0.25em] text-slate-600 print:text-[9px]">
                 NITTAN (THAILAND) CO., LTD.
               </p>
-              <p className="text-lg font-black uppercase tracking-wide text-amber-600">Contractor Card</p>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">บัตรอนุญาตทำงานผู้รับเหมา</p>
+              <p className="text-lg font-black uppercase tracking-wide text-amber-600 print:text-base">Contractor Card</p>
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500 print:text-[9px]">บัตรอนุญาตทำงานผู้รับเหมา</p>
             </div>
-            <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-emerald-500 bg-emerald-50 text-[10px] font-semibold uppercase text-emerald-600">
+            <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-emerald-500 bg-emerald-50 text-[10px] font-semibold uppercase text-emerald-600 print:h-10 print:w-10 print:text-[8px]">
               Safety
             </div>
           </header>
@@ -62,47 +62,47 @@ export default function ContractorCard({
               <Field label="Name – Surname" value={fullName} />
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:flex-row print:items-start print:gap-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:flex-row print:items-start print:gap-4">
               <div className="flex flex-1 flex-col gap-2">
                 <Field label="Issued Date" value={issuedDate ?? '-'} />
                 <Field label="Expired Date" value={expiredDate ?? '-'} />
               </div>
 
-              <div className="flex w-full max-w-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center print:max-w-[180px]">
-                <p className="text-xs font-semibold text-slate-500">ลายเซ็นต์</p>
-                <div className="relative h-12 w-full max-w-[160px]">
+              <div className="flex w-full max-w-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center print:max-w-[140px] print:gap-1.5 print:px-3 print:py-2">
+                <p className="text-xs font-semibold text-slate-500 print:text-[9px]">ลายเซ็นต์</p>
+                <div className="relative h-12 w-full max-w-[160px] print:h-10">
                   <Image src="/signature-mock.svg" alt="Signature placeholder" fill sizes="160px" className="object-contain" />
                 </div>
-                <p className="text-sm font-medium text-slate-600">{approverName}</p>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Approver</p>
+                <p className="text-sm font-medium text-slate-600 print:text-[9px]">{approverName}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 print:text-[8px]">Approver</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="flex flex-1 flex-col justify-between rounded-3xl border border-emerald-200 bg-white/80 p-6 text-slate-700 print:min-h-[54mm] print:w-[86mm] print:rounded-none print:p-4">
+        <section className="card-face card-face--back flex flex-1 flex-col justify-between rounded-3xl border border-emerald-200 bg-white/80 p-6 text-slate-700">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="relative h-12 w-12 overflow-hidden rounded-full border border-emerald-400 bg-emerald-50">
+            <div className="flex items-center gap-3 print:gap-2">
+              <div className="relative h-12 w-12 overflow-hidden rounded-full border border-emerald-400 bg-emerald-50 print:h-10 print:w-10">
                 <Image src="/globe.svg" alt="Safety" fill sizes="48px" className="object-contain p-2" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-emerald-700">เงื่อนไขความปลอดภัย</p>
-                <p className="text-xs text-emerald-500">Safety First</p>
+                <p className="text-sm font-semibold text-emerald-700 print:text-[9px]">เงื่อนไขความปลอดภัย</p>
+                <p className="text-xs text-emerald-500 print:text-[9px]">Safety First</p>
               </div>
             </div>
 
-            <ul className="mt-4 space-y-2 text-xs leading-relaxed text-slate-600">
+            <ul className="mt-4 space-y-2 text-xs leading-relaxed text-slate-600 print:mt-2 print:space-y-1 print:text-[9px]">
               {instructionItems.map((item, index) => (
                 <li key={index} className="flex gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-emerald-400" aria-hidden />
+                  <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-emerald-400 print:mt-1.5" aria-hidden />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-center text-xs text-emerald-600">
+          <div className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-center text-xs text-emerald-600 print:mt-4 print:p-2 print:text-[9px]">
             โทรฉุกเฉิน: 038-743-486-9 ต่อ 223
           </div>
         </section>

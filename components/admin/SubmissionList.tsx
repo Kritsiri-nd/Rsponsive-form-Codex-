@@ -34,7 +34,7 @@ export function SubmissionList({
   onPrintSingle,
 }: Props) {
   return (
-    <ul className="space-y-5">
+    <ul className="space-y-5 print:space-y-0">
       {submissions.map((submission) => (
         <li
           key={submission.id}
