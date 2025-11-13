@@ -75,12 +75,6 @@ export default function ContractorCardAdminPage() {
   const exportFilteredToExcel = useCallback(() => {
     if (filtered.length === 0) return
 
-    const escapeCell = (value: string | number | null) =>
-      String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-
     const headers = [
       'Card No.',
       'Full Name',
@@ -92,10 +86,16 @@ export default function ContractorCardAdminPage() {
       'Score',
     ]
 
-    const headerRow = `<tr>${headers.map((header) => `<th>${header}</th>`).join('')}</tr>`
-    const bodyRows = filtered
-      .map((item) => {
-        const cells = [
+    const escapeCell = (value: string | number | null) => {
+      const raw = value ?? ''
+      const stringified = typeof raw === 'number' ? String(raw) : raw
+      return `"${stringified.replace(/"/g, '""')}"`
+    }
+
+    const rows = [
+      headers.map((header) => `"${header}"`).join(','),
+      ...filtered.map((item) =>
+        [
           escapeCell(item.card_no),
           escapeCell(item.full_name),
           escapeCell(item.citizen_id),
@@ -104,18 +104,17 @@ export default function ContractorCardAdminPage() {
           escapeCell(item.expired_date),
           escapeCell(getExpiryStatus(item.expired_date)),
           escapeCell(typeof item.score === 'number' ? `${item.score}` : ''),
-        ]
-        return `<tr>${cells.map((cell) => `<td>${cell}</td>`).join('')}</tr>`
-      })
-      .join('')
+        ].join(',')
+      ),
+    ]
 
-    const htmlTable = `<table><thead>${headerRow}</thead><tbody>${bodyRows}</tbody></table>`
-    const blob = new Blob(['\ufeff' + htmlTable], { type: 'application/vnd.ms-excel' })
+    const csvContent = rows.join('\n')
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
     const timestamp = new Date().toISOString().split('T')[0]
-    link.download = `contractor-cards-${timestamp}.xls`
+    link.download = `contractor-cards-${timestamp}.csv`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -270,4 +269,3 @@ function convertYear(year: string) {
   const beYear = numeric + 2500
   return beYear - 543
 }
-
