@@ -39,7 +39,7 @@ export default function ContractorCard({
       <div className="card-sheet mx-auto grid w-full max-w-[720px] gap-6 bg-gradient-to-r from-white via-white to-amber-50 p-6 md:grid-cols-2 print:flex print:w-auto print:max-w-none print:bg-white print:p-0 print:gap-0">
         <section
           style={faceStyle}
-          className="card-face card-face--front relative flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-amber-200 bg-white/90 p-7 shadow-sm print:p-3 print:shadow-none"
+          className="card-face card-face--front relative flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-gray-200 bg-white/90 p-7 shadow-sm print:p-3 print:shadow-none"
         >
           <header className="flex items-center justify-between print:gap-2">
             <div className="grid h-16 w-16 place-items-center rounded-full border-2 border-sky-500 bg-sky-50 text-xs font-semibold uppercase text-sky-600 print:h-7 print:w-7 print:text-[6px]">
@@ -70,8 +70,7 @@ export default function ContractorCard({
                 <Field label="Expired Date" value={expiredDate ?? '-'} />
               </div>
 
-              <div className="flex w-full max-w-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center print:max-w-[32mm] print:gap-1 print:px-2 print:py-1.5">
-                <p className="text-sm font-semibold text-slate-500 print:text-[6px]">ลายเซ็นต์</p>
+              <div className="flex w-full max-w-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-slate-50/80 px-4 py-3 text-center print:max-w-[32mm] print:gap-1 print:px-2 print:py-1.5">
                 <div className="relative h-12 w-full max-w-[160px] print:h-6 print:max-w-[28mm]">
                   <Image src="/signature-mock.svg" alt="Signature placeholder" fill sizes="160px" className="object-contain" />
                 </div>
@@ -84,7 +83,7 @@ export default function ContractorCard({
 
         <section
           style={faceStyle}
-          className="card-face card-face--back flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-emerald-200 bg-white/90 p-7 text-slate-700 shadow-sm print:p-3 print:shadow-none"
+          className="card-face card-face--back flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-gray-200 bg-white/90 p-7 text-slate-700 shadow-sm print:p-3 print:shadow-none"
         >
           <div>
             <div className="flex items-center gap-3 print:gap-1.5">
@@ -136,8 +135,8 @@ function Field({ label, value, highlight }: FieldProps) {
         highlight && 'border-amber-200 bg-amber-50 text-amber-700'
       )}
     >
-      <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 print:text-[6px]">{label}</span>
-      <span className="flex-1 break-words text-left text-base font-semibold text-slate-800 print:min-w-0 print:text-[7px]">{value}</span>
+      <span className="text-xs font-bold uppercase tracking-wide text-slate-500 print:text-[6px]">{label}</span>
+      <span className="flex-1 break-words text-left text-base font-medium text-slate-800 print:min-w-0 print:text-[7px]">{value}</span>
     </div>
   )
 }
