@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,6 +26,8 @@ type Company = {
   short_name: string
 }
 
+const ALLOWED_PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png']
+
 const FormSchema = z.object({
   company: z.string().min(1, 'กรุณาเลือกบริษัท'),
   full_name: z.string().min(1, 'กรุณากรอกชื่อ-นามสกุล'),
@@ -41,6 +43,10 @@ export default function PublicFormPage() {
   const [answers, setAnswers] = useState<(number | null)[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [previewName, setPreviewName] = useState<string>('')
+  const [photoError, setPhotoError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const {
     register,
@@ -95,6 +101,23 @@ export default function PublicFormPage() {
     const selectedCompany = companies.find((company) => company.full_name === values.company)
     const company_short = selectedCompany?.short_name ?? 'XXX'
 
+    if (!photoFile) {
+      setPhotoError('กรุณาแนบรูปถ่าย')
+      return
+    }
+
+    if (photoFile.size === 0) {
+      setPhotoError('ไฟล์ไม่ถูกต้อง กรุณาแนบรูปถ่ายอีกครั้ง')
+      return
+    }
+
+    const extension = photoFile.name.split('.').pop()?.toLowerCase() || ''
+
+    if (!photoFile.type.startsWith('image/') || !ALLOWED_PHOTO_EXTENSIONS.includes(extension)) {
+      setPhotoError('รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png')
+      return
+    }
+
     const payload = {
       full_name: values.full_name,
       company: values.company,
@@ -108,10 +131,14 @@ export default function PublicFormPage() {
       expired_date: expiredDate,
     }
 
+    const formData = new FormData()
+    formData.append('payload', JSON.stringify(payload))
+    formData.append('photo', photoFile)
+
     setSubmitting(true)
     const response = await fetch('/api/submit', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: formData,
     })
     setSubmitting(false)
 
@@ -120,6 +147,12 @@ export default function PublicFormPage() {
       return
     }
 
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+    setPreviewName('')
+    setPhotoError(null)
+    setPhotoFile(null)
     router.push(`/success?score=${correct}&total=${total}&percent=${percent}`)
   }
 
@@ -185,6 +218,41 @@ export default function PublicFormPage() {
                 <label className="text-sm font-medium text-slate-600">เลขบัตรประชาชน*</label>
                 <Input {...register('citizen_id')} placeholder="กรอกเลขบัตรประชาชน" />
                 {errors.citizen_id && <p className="mt-1 text-xs text-red-500">{errors.citizen_id.message}</p>}
+              </div>
+
+              <div className="sm:col-span-2">
+                <label className="text-sm font-medium text-slate-600">แนบรูปถ่ายผู้เข้าอบรม*</label>
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null
+                    if (!file) {
+                      setPhotoFile(null)
+                      setPreviewName('')
+                      setPhotoError('กรุณาแนบรูปถ่าย')
+                      return
+                    }
+
+                    const extension = file.name.split('.').pop()?.toLowerCase() || ''
+                    if (!file.type.startsWith('image/') || !ALLOWED_PHOTO_EXTENSIONS.includes(extension)) {
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = ''
+                      }
+                      setPhotoFile(null)
+                      setPreviewName('')
+                      setPhotoError('รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png')
+                      return
+                    }
+
+                    setPhotoFile(file)
+                    setPreviewName(file.name)
+                    setPhotoError(null)
+                  }}
+                />
+                {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
+                {previewName && !photoError && <p className="mt-1 text-xs text-slate-500">ไฟล์ที่เลือก: {previewName}</p>}
               </div>
             </section>
 
