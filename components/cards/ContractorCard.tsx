@@ -57,14 +57,14 @@ export default function ContractorCard({
             </div>
           </header>
 
-          <div className="mt-6 flex flex-col gap-5 print:mt-2 print:gap-2">
+          <div className="mt-6 flex flex-col gap-5 print:mt-2 print:gap-1">
             <div className="flex flex-col gap-2.5 print:gap-1.5">
               <Field label="ID No." value={cardNo} highlight />
               <Field label="Company" value={companyName} />
               <Field label="Name – Surname" value={fullName} />
             </div>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:flex-row print:items-start print:gap-2">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between print:flex-row print:items-start print:gap-2 print:-mt-1">
               <div className="flex flex-1 flex-col gap-2 print:gap-1.5">
                 <Field label="Issued Date" value={issuedDate ?? '-'} />
                 <Field label="Expired Date" value={expiredDate ?? '-'} />
