@@ -13,6 +13,7 @@ type Submission = {
   expired_date: string | null
   citizen_id: string | null
   score: number | null
+  image_url: string | null
   viewed: boolean
 }
 
@@ -70,6 +71,7 @@ export function SubmissionList({
             companyName={submission.company || '-'}
             issuedDate={submission.issued_date}
             expiredDate={submission.expired_date}
+            imageUrl={submission.image_url}
             onPrint={() => onPrintSingle(submission.id)}
           />
         </li>

@@ -16,6 +16,7 @@ type Submission = {
   expired_date: string | null
   citizen_id: string | null
   score: number | null
+  image_url: string | null
 }
 
 export default function AdminPage() {

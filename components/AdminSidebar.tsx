@@ -14,7 +14,7 @@ export default function AdminSidebar({ userEmail }: AdminSidebarProps) {
   const pathname = usePathname()
 
   function handleSignOut() {
-    signOut({ callbackUrl: '/login' })
+    signOut({ callbackUrl: '/form' })
   }
 
   return (
