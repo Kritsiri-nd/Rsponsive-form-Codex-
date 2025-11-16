@@ -4,6 +4,30 @@ import ContractorCard from '@/components/cards/ContractorCard'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
+const printStyles = `
+  @media print {
+    ul {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 5px !important;
+      align-items: flex-start !important;
+      align-content: flex-start !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+
+    ul > li {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+      flex-shrink: 0 !important;
+    }
+  }
+`
+
 type Submission = {
   id: string
   card_no: string | null
@@ -37,6 +61,7 @@ export function SubmissionList({
 }: Props) {
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: printStyles }} />
       {/* รายการสำหรับแสดงในหน้า admin - ซ่อนเมื่อพิมพ์ */}
       <div className="print:hidden">
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
