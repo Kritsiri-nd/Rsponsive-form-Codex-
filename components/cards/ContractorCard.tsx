@@ -107,7 +107,7 @@ export default function ContractorCard({
           <section className="card-face card-face--front relative flex aspect-[85.6/54] w-full max-w-[800px] flex-col justify-between overflow-hidden bg-white print:max-w-none print:rounded-none print:border print:border-[#44444E]">
 
             <header className="flex items-center gap-4 bg-[#0A2C84] px-1 py-2 text-white reletive">
-            <div className="flex flex-col items-center gap-3 absolute">
+              <div className="flex flex-col items-center gap-3 absolute">
                 <div className="h-3">
                   <Image
                     src="/Nittan-logo.jpg"
@@ -183,17 +183,26 @@ export default function ContractorCard({
 
           {/* Back side */}
           <section className=" card-face--back hidden aspect-[85.6/54] flex-col overflow-hidden bg-white print:flex print:max-w-none print:rounded-none print:border print:border-[#44444E] print:overflow-visible">
-            <header className="flex items-center justify-center bg-[#0A2C84] px-6 py-8 text-white print:px-4 print:py-2">
-              <h2 className="text-[20px] item-center font-semibold tracking-wide print:text-[8px] relative">เงื่อนไขและข้อปฏิบัติ</h2>
+            <header className="flex items-center justify-center bg-[#0A2C84] px-6 py-8 text-white print:px-4 print:py-2 relative">
+              <h2 className="print:text-[17px] item-center font-semibold tracking-wide">เงื่อนไขและข้อปฏิบัติ</h2>
+              <div className="flex flex-col items-center absolute right-6 ">
+                <Image
+                  src="/safety-logo.jpg"
+                  alt="Sefety logo"
+                  width={300}
+                  height={150}
+                  className=" h-7 w-auto object-contain"
+                />
+              </div>
             </header>
 
-            <article className="flex flex-1 flex-col justify-between px-6 py-5 text-black print:px-4 print:py-3">
-              <ol className="list-decimal space-y-2.5 pl-5 text-sm leading-relaxed print:space-y-1.5 print:text-[7px] print:leading-snug">
+            <article className="flex flex-1 flex-col justify-between px-6 py-5 text-black print:px-2 print:py-3 print:font-bold">
+              <ol className="list-decimal space-y-2.5 pl-5 text-sm leading-relaxed print:space-y-1.5 print:text-[8px] print:leading-tight">
                 {instructionItems.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))}
               </ol>
-              <div className="text-center text-sm print:px-3 print:py-2 print:text-[7px]">
+              <div className="text-center text-sm print:px-3 print:py-2 print:text-[9px] print:font-bold">
                 <p>*** ติดต่อแผนกความปลอดภัย ***</p>
                 <p>โทร. 038-743-486-9 ต่อ 223</p>
               </div>
