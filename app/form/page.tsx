@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -45,7 +46,6 @@ export default function PublicFormPage() {
   const [submitting, setSubmitting] = useState(false)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [previewName, setPreviewName] = useState<string>('')
-  const [photoError, setPhotoError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const {
@@ -60,6 +60,7 @@ export default function PublicFormPage() {
       citizen_id: '',
     },
   })
+
 
   useEffect(() => {
     async function load() {
@@ -87,7 +88,11 @@ export default function PublicFormPage() {
 
   async function onSubmit(values: FormValues) {
     if (answers.some((answer) => answer === null)) {
-      alert('กรุณาตอบคำถามให้ครบทุกข้อ')
+      const unansweredCount = answers.filter((answer) => answer === null).length
+      toast.error('กรุณาตอบคำถามให้ครบทุกข้อ', {
+        description: `ยังมีคำถามที่ยังไม่ได้ตอบ ${unansweredCount} ข้อ`,
+        duration: 4000,
+      })
       return
     }
 
@@ -102,19 +107,28 @@ export default function PublicFormPage() {
     const company_short = selectedCompany?.short_name ?? 'XXX'
 
     if (!photoFile) {
-      setPhotoError('กรุณาแนบรูปถ่าย')
+      toast.error('กรุณาแนบรูปถ่าย', {
+        description: 'กรุณาเลือกไฟล์รูปถ่ายผู้เข้าอบรม',
+        duration: 4000,
+      })
       return
     }
 
     if (photoFile.size === 0) {
-      setPhotoError('ไฟล์ไม่ถูกต้อง กรุณาแนบรูปถ่ายอีกครั้ง')
+      toast.error('ไฟล์ไม่ถูกต้อง', {
+        description: 'กรุณาแนบรูปถ่ายอีกครั้ง',
+        duration: 4000,
+      })
       return
     }
 
     const extension = photoFile.name.split('.').pop()?.toLowerCase() || ''
 
     if (!photoFile.type.startsWith('image/') || !ALLOWED_PHOTO_EXTENSIONS.includes(extension)) {
-      setPhotoError('รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png')
+      toast.error('รูปแบบไฟล์ไม่รองรับ', {
+        description: 'รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png',
+        duration: 4000,
+      })
       return
     }
 
@@ -151,7 +165,6 @@ export default function PublicFormPage() {
       fileInputRef.current.value = ''
     }
     setPreviewName('')
-    setPhotoError(null)
     setPhotoFile(null)
     router.push(`/success?score=${correct}&total=${total}&percent=${percent}`)
   }
@@ -193,7 +206,26 @@ export default function PublicFormPage() {
         </CardHeader>
 
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit, (errors) => {
+              if (errors.company) {
+                toast.error('กรุณาเลือกบริษัท', {
+                  duration: 4000,
+                })
+              }
+              if (errors.full_name) {
+                toast.error('กรุณากรอกชื่อ-นามสกุล', {
+                  duration: 4000,
+                })
+              }
+              if (errors.citizen_id) {
+                toast.error('กรุณากรอกเลขบัตรประชาชน', {
+                  duration: 4000,
+                })
+              }
+            })}
+          >
             <section className="grid gap-4 rounded-2xl bg-slate-50/60 p-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className="text-sm font-medium text-slate-600">บริษัท*</label>
@@ -205,19 +237,16 @@ export default function PublicFormPage() {
                     </option>
                   ))}
                 </Select>
-                {errors.company && <p className="mt-1 text-xs text-red-500">{errors.company.message}</p>}
               </div>
 
               <div>
                 <label className="text-sm font-medium text-slate-600">ชื่อ-นามสกุล*</label>
                 <Input {...register('full_name')} placeholder="กรอกชื่อ-นามสกุล" />
-                {errors.full_name && <p className="mt-1 text-xs text-red-500">{errors.full_name.message}</p>}
               </div>
 
               <div>
                 <label className="text-sm font-medium text-slate-600">เลขบัตรประชาชน*</label>
                 <Input {...register('citizen_id')} placeholder="กรอกเลขบัตรประชาชน" />
-                {errors.citizen_id && <p className="mt-1 text-xs text-red-500">{errors.citizen_id.message}</p>}
               </div>
 
               <div className="sm:col-span-2">
@@ -231,7 +260,6 @@ export default function PublicFormPage() {
                     if (!file) {
                       setPhotoFile(null)
                       setPreviewName('')
-                      setPhotoError('กรุณาแนบรูปถ่าย')
                       return
                     }
 
@@ -242,17 +270,18 @@ export default function PublicFormPage() {
                       }
                       setPhotoFile(null)
                       setPreviewName('')
-                      setPhotoError('รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png')
+                      toast.error('รูปแบบไฟล์ไม่รองรับ', {
+                        description: 'รองรับเฉพาะไฟล์ .jpg, .jpeg หรือ .png',
+                        duration: 4000,
+                      })
                       return
                     }
 
                     setPhotoFile(file)
                     setPreviewName(file.name)
-                    setPhotoError(null)
                   }}
                 />
-                {photoError && <p className="mt-1 text-xs text-red-500">{photoError}</p>}
-                {previewName && !photoError && <p className="mt-1 text-xs text-slate-500">ไฟล์ที่เลือก: {previewName}</p>}
+                {previewName && <p className="mt-1 text-xs text-slate-500">ไฟล์ที่เลือก: {previewName}</p>}
               </div>
             </section>
 

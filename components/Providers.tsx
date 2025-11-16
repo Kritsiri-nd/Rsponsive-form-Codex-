@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
+import { Toaster } from 'sonner'
 
 type ProvidersProps = {
   session: Session | null
@@ -10,5 +11,10 @@ type ProvidersProps = {
 }
 
 export function Providers({ session, children }: ProvidersProps) {
-  return <SessionProvider session={session}>{children}</SessionProvider>
+  return (
+    <SessionProvider session={session}>
+      {children}
+      <Toaster position="top-center" richColors closeButton />
+    </SessionProvider>
+  )
 }
