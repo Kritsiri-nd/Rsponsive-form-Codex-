@@ -2,6 +2,7 @@
 
 import ContractorCard from '@/components/cards/ContractorCard'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 type Submission = {
   id: string
@@ -35,47 +36,99 @@ export function SubmissionList({
   onPrintSingle,
 }: Props) {
   return (
-    <ul className="space-y-5 print:space-y-0">
-      {submissions.map((submission) => (
-        <li
-          key={submission.id}
-          className={cn(printIds && !printIds.has(submission.id) && 'print:hidden')}
-        >
-          <div className="mb-3 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm shadow-slate-900/5 backdrop-blur print:hidden sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm text-slate-500">
-              ส่งเมื่อ {new Date(submission.created_at).toLocaleString('th-TH')}
-            </div>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
-              <label className="inline-flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={selected.has(submission.id)}
-                  onChange={(event) => onToggleSelect(submission.id, event.target.checked)}
-                />
-                เลือกพิมพ์
-              </label>
-              <label className="inline-flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={submission.viewed}
-                  onChange={(event) => onToggleViewed(submission.id, event.target.checked)}
-                />
-                ดูแล้ว
-              </label>
-            </div>
-          </div>
+    <>
+      {/* รายการสำหรับแสดงในหน้า admin - ซ่อนเมื่อพิมพ์ */}
+      <div className="print:hidden">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+                  เลขประจำตัวผู้รับเหมา
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+                  ชื่อ - นามสกุล
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+                  ชื่อบริษัท
+                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+                  วันที่ออกบัตร
+                </th>
+                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-700">
+                  จัดการ
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {submissions.map((submission) => (
+                <tr key={submission.id} className="hover:bg-slate-50/50">
+                  <td className="px-4 py-4 text-sm font-medium text-slate-900">
+                    {submission.card_no || '-'}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-slate-700">
+                    {submission.full_name}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-slate-700">
+                    {submission.company || '-'}
+                  </td>
+                  <td className="px-4 py-4 text-sm text-slate-700">
+                    {submission.issued_date || '-'}
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex items-center justify-end gap-3">
+                      <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(submission.id)}
+                          onChange={(event) => onToggleSelect(submission.id, event.target.checked)}
+                          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        เลือกพิมพ์
+                      </label>
+                      <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+                        <input
+                          type="checkbox"
+                          checked={submission.viewed}
+                          onChange={(event) => onToggleViewed(submission.id, event.target.checked)}
+                          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                        />
+                        ดูแล้ว
+                      </label>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onPrintSingle(submission.id)}
+                      >
+                        พิมพ์
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          <ContractorCard
-            cardNo={submission.card_no || '-'}
-            fullName={submission.full_name}
-            companyName={submission.company || '-'}
-            issuedDate={submission.issued_date}
-            expiredDate={submission.expired_date}
-            imageUrl={submission.image_url}
-            onPrint={() => onPrintSingle(submission.id)}
-          />
-        </li>
-      ))}
-    </ul>
+      {/* การ์ดสำหรับพิมพ์ - แสดงเฉพาะเมื่อพิมพ์ */}
+      <ul className="hidden space-y-5 print:block print:space-y-0">
+        {submissions.map((submission) => (
+          <li
+            key={submission.id}
+            className={cn(printIds && !printIds.has(submission.id) && 'print:hidden')}
+          >
+            <ContractorCard
+              cardNo={submission.card_no || '-'}
+              fullName={submission.full_name}
+              companyName={submission.company || '-'}
+              issuedDate={submission.issued_date}
+              expiredDate={submission.expired_date}
+              imageUrl={submission.image_url}
+            />
+          </li>
+        ))}
+      </ul>
+    </>
   )
 }
