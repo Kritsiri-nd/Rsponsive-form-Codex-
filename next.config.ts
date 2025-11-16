@@ -1,7 +1,12 @@
 import type { NextConfig } from 'next'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-let remotePatterns: NextConfig['images'] extends infer T ? T extends { remotePatterns: infer R } ? R : never : never = []
+type RemotePattern = {
+  protocol: 'http' | 'https'
+  hostname: string
+  pathname: string
+}
+let remotePatterns: RemotePattern[] = []
 
 if (supabaseUrl) {
   try {
