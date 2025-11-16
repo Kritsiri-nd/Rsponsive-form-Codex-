@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
+
 
 const printStyles = `
   @media print {
@@ -102,21 +102,29 @@ export default function ContractorCard({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: printStyles }} />
-      <div className="contractor-card overflow-hidden rounded-3xl border-4 border-blue-900 bg-white shadow-xl shadow-slate-900/10 print:border-0 print:rounded-none print:shadow-none print:m-0 print:p-0">
+      <div className="contractor-card overflow-hidden bg-white print:border-0 print:rounded-none print:shadow-none print:m-0 print:px-0">
         <div className="card-sheet mx-auto grid w-full max-w-[800px] gap-6 bg-white p-6 md:grid-cols-1 print:flex print:w-auto print:max-w-none print:p-0 print:bg-white">
           <section className="card-face card-face--front relative flex aspect-[85.6/54] w-full max-w-[800px] flex-col justify-between overflow-hidden bg-white print:max-w-none print:rounded-none print:border print:border-[#44444E]">
-            <header className="flex items-center gap-4 bg-[#0A2C84] px-4 py-2 text-white">
-              <div className="flex items-center gap-3">
-                <div className="relative h-8 w-8 overflow-hidden rounded-md border border-white/30 bg-white">
-                  <Image src="/Nittan-logo.png" alt="Nittan logo" fill sizes="32px" className="object-contain p-2" />
+
+            <header className="flex items-center gap-4 bg-[#0A2C84] px-1 py-2 text-white reletive">
+            <div className="flex flex-col items-center gap-3 absolute">
+                <div className="h-3">
+                  <Image
+                    src="/Nittan-logo.jpg"
+                    alt="Nittan logo"
+                    width={300}
+                    height={150}
+                    className=" h-5 w-auto object-contain"
+                  />
                 </div>
+
                 <div className="leading-tight text-white">
-                  <p className="text-[6px] font-semibold tracking-wide">NITTAN (THAILAND) CO., LTD.</p>
+                  <p className="text-[5px] font-semibold tracking-wide">NITTAN (THAILAND) CO., LTD.</p>
                 </div>
               </div>
-              <div className="flex-1 text-right">
-                <p className="text-[10px] font-extrabold uppercase tracking-wide">CONTRACTOR CARD</p>
-                <p className="text-[6px] font-medium">บัตรอนุญาตทำงานผู้รับเหมา</p>
+              <div className="flex-1 text-center">
+                <p className="text-[12px] font-extrabold uppercase tracking-wide">CONTRACTOR CARD</p>
+                <p className="text-[10px] font-medium">บัตรอนุญาตทำงานผู้รับเหมา</p>
               </div>
             </header>
 
