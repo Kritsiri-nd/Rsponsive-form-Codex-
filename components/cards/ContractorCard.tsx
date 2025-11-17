@@ -8,9 +8,9 @@ const printStyles = `
     }
 
     .contractor-card {
-      width: 175.2mm !important;
-      min-width: 175.2mm !important;
-      max-width: 175.2mm !important;
+      width: 180mm !important;
+      min-width: 180mm !important;
+      max-width: 180mm !important;
       height: 54mm !important;
       min-height: 54mm !important;
       max-height: 54mm !important;
@@ -19,9 +19,9 @@ const printStyles = `
     }
 
     .contractor-card .card-sheet {
-      width: 175.2mm !important;
-      min-width: 175.2mm !important;
-      max-width: 175.2mm !important;
+      width: 180mm !important;
+      min-width: 180mm !important;
+      max-width: 180mm !important;
       height: 54mm !important;
       min-height: 54mm !important;
       max-height: 54mm !important;
@@ -29,9 +29,9 @@ const printStyles = `
     }
 
     .contractor-card .card-face {
-      width: 85.6mm !important;
-      min-width: 85.6mm !important;
-      max-width: 85.6mm !important;
+      width: 90mm !important;
+      min-width: 90mm !important;
+      max-width: 90mm !important;
       height: 54mm !important;
       min-height: 54mm !important;
       max-height: 54mm !important;
