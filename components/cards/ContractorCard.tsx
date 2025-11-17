@@ -179,9 +179,9 @@ export default function ContractorCard({
           </section>
 
           {/* Back side */}
-          <section className=" card-face--back hidden aspect-[85.6/54] flex-col overflow-hidden bg-white print:flex print:max-w-none print:rounded-none print:border print:border-[#44444E] print:overflow-visible">
-            <header className="flex items-center justify-center bg-[#0A2C84] px-6 py-8 text-white print:px-4 print:py-2 relative">
-              <h2 className="print:text-[17px] item-center font-semibold tracking-wide">เงื่อนไขและข้อปฏิบัติ</h2>
+          <section className="card-face card-face--back hidden aspect-[85.6/54] flex-col overflow-hidden bg-white print:flex print:max-w-none print:rounded-none print:border print:border-[#44444E] print:overflow-visible">
+            <header className="flex items-center justify-center bg-[#0A2C84] px-6 py-3! text-white print:px-4 print:py-2 relative">
+              <h2 className="print:text-[16px] item-center font-semibold tracking-wide">เงื่อนไขและข้อปฏิบัติ</h2>
               <div className="flex flex-col items-center absolute right-6 ">
                 <img
                   src="/safety-logo.jpg"
