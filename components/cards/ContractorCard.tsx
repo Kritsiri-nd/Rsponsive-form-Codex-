@@ -1,8 +1,5 @@
 'use client'
 
-import Image from 'next/image'
-
-
 const printStyles = `
   @media print {
     @page {
@@ -28,7 +25,7 @@ const printStyles = `
       height: 54mm !important;
       min-height: 54mm !important;
       max-height: 54mm !important;
-      gap: 4mm !important;
+      gap: 0mm !important;
     }
 
     .contractor-card .card-face {
@@ -109,12 +106,12 @@ export default function ContractorCard({
             <header className="flex items-center gap-4 bg-[#0A2C84] px-1 py-2 text-white reletive">
               <div className="flex flex-col items-center gap-3 absolute">
                 <div className="h-3">
-                  <Image
+                  <img
                     src="/Nittan-logo.jpg"
                     alt="Nittan logo"
                     width={300}
                     height={150}
-                    className=" h-5 w-auto object-contain"
+                    className="h-5 w-auto object-contain"
                   />
                 </div>
 
@@ -168,12 +165,12 @@ export default function ContractorCard({
                 <p className='text-center font-bold'>วันหมดอายุ</p>
               </div>
               <div className="flex-1 text-[7px] relative">
-                <Image
+                <img
                   src="/signature-no-bg.png"
                   alt="signature"
                   width={300}
                   height={150}
-                  className="h-10 w-auto object-contain mb-1 absolute bottom-2 -right-0.5"
+                  className="absolute bottom-2 -right-0.5 mb-1 h-10 w-auto object-contain"
                 />
                 <p className='text-center font-bold'>ออกบัตรโดย</p>
                 <p className="uppercase text-center font-bold">Safety Officer</p>
@@ -186,12 +183,12 @@ export default function ContractorCard({
             <header className="flex items-center justify-center bg-[#0A2C84] px-6 py-8 text-white print:px-4 print:py-2 relative">
               <h2 className="print:text-[17px] item-center font-semibold tracking-wide">เงื่อนไขและข้อปฏิบัติ</h2>
               <div className="flex flex-col items-center absolute right-6 ">
-                <Image
+                <img
                   src="/safety-logo.jpg"
-                  alt="Sefety logo"
+                  alt="Safety logo"
                   width={300}
                   height={150}
-                  className=" h-7 w-auto object-contain"
+                  className="h-7 w-auto object-contain"
                 />
               </div>
             </header>
