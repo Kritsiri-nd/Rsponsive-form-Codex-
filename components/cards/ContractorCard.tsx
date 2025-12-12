@@ -143,7 +143,7 @@ export default function ContractorCard({
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center gap-1 font-bold text-[9px]">
+              <div className="flex flex-col justify-center gap-1 font-bold text-[11px]">
                 <p className='text-[#0A2C84] '>เลขประจำตัวผู้รับเหมาฯ :</p>
                 <p className="text-[14px] text-black">{cardNo}</p>
                 <p className='text-[#0A2C84]'>
@@ -156,21 +156,21 @@ export default function ContractorCard({
             </div>
 
             <div className="flex items-center gap-10 px-8 pb-3 pt-2 text-black">
-              <div className="flex-1 text-[7px]">
+              <div className="flex-1 text-[8px]">
                 <p className="text-center font-bold">{issuedDate ?? '-'}</p>
                 <p className='text-center font-bold'>วันที่ออกบัตร</p>
               </div>
-              <div className="flex-1 text-[7px]">
+              <div className="flex-1 text-[8px]">
                 <p className="font-bold text-center">{expiredDate ?? '-'}</p>
                 <p className='text-center font-bold'>วันหมดอายุ</p>
               </div>
-              <div className="flex-1 text-[7px] relative">
+              <div className="flex-1 text-[8px] relative">
                 <img
                   src="/signature-no-bg.png"
                   alt="signature"
                   width={300}
                   height={150}
-                  className="absolute bottom-2 -right-0.5 mb-1 h-10 w-auto object-contain"
+                  className="absolute bottom-2.5 -right-0.5 mb-1 h-10 w-auto object-contain"
                 />
                 <p className='text-center font-bold'>ออกบัตรโดย</p>
                 <p className="uppercase text-center font-bold">Safety Officer</p>
@@ -193,13 +193,13 @@ export default function ContractorCard({
               </div>
             </header>
 
-            <article className="flex flex-1 flex-col justify-between px-6 py-5 text-black print:px-2 print:py-3 print:font-bold">
-              <ol className="list-decimal space-y-2.5 pl-5 text-sm leading-relaxed print:space-y-1.5 print:text-[8px] print:leading-tight">
+            <article className="flex flex-1 flex-col justify-between px-6 py-5 text-black print:px-0 print:py-0.5 print:font-bold">
+              <ol className="list-decimal space-y-2.5 pl-5 text-sm leading-relaxed print:space-y-0.5 print:text-[10px] print:leading-tight">
                 {instructionItems.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))}
               </ol>
-              <div className="text-center text-sm print:px-3 print:py-2 print:text-[9px] print:font-bold">
+              <div className="text-center text-sm print:px-3 print:py-2 print:text-[11px] print:font-bold">
                 <p>*** ติดต่อแผนกความปลอดภัย ***</p>
                 <p>โทร. 038-743-486-9 ต่อ 223</p>
               </div>
