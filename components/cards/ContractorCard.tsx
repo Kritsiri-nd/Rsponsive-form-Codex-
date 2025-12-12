@@ -107,7 +107,7 @@ export default function ContractorCard({
               <div className="flex flex-col items-center gap-3 absolute">
                 <div className="h-3">
                   <img
-                    src="/Nittan-logo.jpg"
+                    src="/nittan.png"
                     alt="Nittan logo"
                     width={300}
                     height={150}
@@ -184,7 +184,7 @@ export default function ContractorCard({
               <h2 className="print:text-[16px] item-center font-semibold tracking-wide">เงื่อนไขและข้อปฏิบัติ</h2>
               <div className="flex flex-col items-center absolute right-6 ">
                 <img
-                  src="/safety-logo.jpg"
+                  src="/safety.png"
                   alt="Safety logo"
                   width={300}
                   height={150}
