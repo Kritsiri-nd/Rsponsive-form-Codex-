@@ -125,7 +125,7 @@ export default function ContractorCard({
               </div>
             </header>
 
-            <div className="flex flex-1 gap-6 px-6">
+            <div className="flex flex-1 gap-2 px-6">
               <div className="flex items-center justify-center">
                 <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-[#0A2C84] bg-white">
                   {imageUrl ? (
@@ -147,7 +147,7 @@ export default function ContractorCard({
                 <p className='text-[#0A2C84] '>เลขประจำตัวผู้รับเหมาฯ :</p>
                 <p className="text-[14px] text-black">{cardNo}</p>
                 <p className='text-[#0A2C84]'>
-                  ชื่อ - นามสกุล : <span className="text-black">{fullName}</span>
+                  ชื่อ-นามสกุล : <span className="text-black">{fullName}</span>
                 </p>
                 <p className='text-[#0A2C84]'>
                   ชื่อบริษัท : <span className="uppercase text-black">{companyName}</span>
